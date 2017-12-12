@@ -70,7 +70,7 @@ protected:
 // helping functions
 std::string prepareVersionString();
 std::string prepareLLLCVersionString();
-std::vector<boost::filesystem::path> getJsonFiles(boost::filesystem::path const& _dirPath, std::string const& _particularFile = {});
+std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _dirPath, std::string const& _extentionMask, std::string const& _particularFile = {});
 std::string netIdToString(eth::Network _netId);
 eth::Network stringToNetId(std::string const& _netname);
 bool isDisabledNetwork(eth::Network _net);

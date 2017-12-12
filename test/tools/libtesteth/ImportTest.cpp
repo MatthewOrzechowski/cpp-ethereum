@@ -28,6 +28,7 @@
 #include <test/tools/jsontests/BlockChainTests.h>
 
 #include <boost/filesystem/path.hpp>
+#include <yaml-cpp/yaml.h>
 
 using namespace dev;
 using namespace dev::test;
