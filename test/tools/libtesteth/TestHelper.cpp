@@ -28,7 +28,7 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/algorithm/string.hpp>
+#include <set>
 #include <string>
 
 using namespace std;
@@ -243,11 +243,31 @@ void replaceLLLinState(json_spirit::mObject& _o)
 	}
 }
 
-std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _dirPath, string const& _extentionMask, std::string const& _particularFile)
+template<class T>
+std::set<T> removeRepeatElementsFromSet(std::set<T> const& _set)
+{
+	std::set<T> uniqueSet;
+	for(auto const& element: _set)
+	{
+		bool found = false;
+		for(auto const& uniqueElement: uniqueSet)
+		{
+			if (element == uniqueElement)
+			{
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			uniqueSet.insert(element);
+	}
+	return uniqueSet;
+}
+
+std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _dirPath, std::set<string> const _extentionMask, std::string const& _particularFile)
 {
 	vector<boost::filesystem::path> jsonFiles;
-	vector<string> extentions;
-	boost::split(extentions, _extentionMask, boost::is_any_of("|"));
+	std::set<string> extentions = removeRepeatElementsFromSet(_extentionMask);
 	if (!_particularFile.empty())
 	{
 		for(auto const& ext: extentions)

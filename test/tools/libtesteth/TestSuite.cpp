@@ -122,7 +122,7 @@ void TestSuite::runAllTestsInFolder(string const& _testFolder) const
 {
 	// check that destination folder test files has according Filler file in src folder
 	string const filter = test::Options::get().singleTestName.empty() ? string() : test::Options::get().singleTestName;
-	vector<fs::path> const compiledFiles = test::getFiles(getFullPath(_testFolder), ".json|.yaml" ,filter);
+	vector<fs::path> const compiledFiles = test::getFiles(getFullPath(_testFolder), {".json",".yaml"} ,filter);
 	for (auto const& file: compiledFiles)
 	{
 		fs::path const expectedFillerName = getFullPathFiller(_testFolder) / fs::path(file.stem().string() + c_fillerPostf + ".json");
@@ -144,7 +144,7 @@ void TestSuite::runAllTestsInFolder(string const& _testFolder) const
 	}
 
 	// run all tests
-	vector<fs::path> const files = test::getFiles(getFullPathFiller(_testFolder), ".json|.yaml", filter.empty() ? filter : filter + "Filler");
+	vector<fs::path> const files = test::getFiles(getFullPathFiller(_testFolder), {".json",".yaml"}, filter.empty() ? filter : filter + "Filler");
 
 	auto& testOutput = test::TestOutputHelper::get();
 	testOutput.initTest(files.size());
