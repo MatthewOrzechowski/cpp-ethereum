@@ -78,12 +78,15 @@ bool isDisabledNetwork(eth::Network _net);
 std::vector<eth::Network> const& getNetworks();
 u256 toInt(json_spirit::mValue const& _v);
 byte toByte(json_spirit::mValue const& _v);
+json_spirit::mValue parseYamlToJson(std::string const& _string);
 void replaceLLLinState(json_spirit::mObject& _o);
 std::string compileLLL(std::string const& _code);
 std::string executeCmd(std::string const& _command);
 bytes importCode(json_spirit::mObject const& _o);
 bytes importData(json_spirit::mObject const& _o);
 bytes importByteArray(std::string const& _str);
+template<class T>
+std::set<T> removeRepeatElementsFromSet(std::set<T> const& _set);
 void checkHexHasEvenLength(std::string const&);
 void copyFile(boost::filesystem::path const& _source, boost::filesystem::path const& _destination);
 eth::LogEntries importLog(json_spirit::mArray const& _o);

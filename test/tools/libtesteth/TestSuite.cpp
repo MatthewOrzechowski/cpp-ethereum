@@ -105,7 +105,6 @@ namespace dev
 {
 namespace test
 {
-
 string const c_fillerPostf = "Filler";
 string const c_copierPostf = "Copier";
 
@@ -122,14 +121,14 @@ void TestSuite::runAllTestsInFolder(string const& _testFolder) const
 {
 	// check that destination folder test files has according Filler file in src folder
 	string const filter = test::Options::get().singleTestName.empty() ? string() : test::Options::get().singleTestName;
-	vector<fs::path> const compiledFiles = test::getFiles(getFullPath(_testFolder), {".json",".yaml"} ,filter);
+	vector<fs::path> const compiledFiles = test::getFiles(getFullPath(_testFolder), {".json", ".yml"} ,filter);
 	for (auto const& file: compiledFiles)
 	{
 		fs::path const expectedFillerName = getFullPathFiller(_testFolder) / fs::path(file.stem().string() + c_fillerPostf + ".json");
-		fs::path const expectedFillerName2 = getFullPathFiller(_testFolder) / fs::path(file.stem().string() + c_fillerPostf + ".yaml");
+		fs::path const expectedFillerName2 = getFullPathFiller(_testFolder) / fs::path(file.stem().string() + c_fillerPostf + ".yml");
 		fs::path const expectedCopierName = getFullPathFiller(_testFolder) / fs::path(file.stem().string() + c_copierPostf + ".json");
 		BOOST_REQUIRE_MESSAGE(fs::exists(expectedFillerName) || fs::exists(expectedFillerName2) || fs::exists(expectedCopierName), "Compiled test folder contains test without Filler: " + file.filename().string());
-		BOOST_REQUIRE_MESSAGE(!(fs::exists(expectedFillerName) && fs::exists(expectedFillerName2) && fs::exists(expectedCopierName)), "Src test could either be Filler.json, Filler.yaml or Copier.json: " + file.filename().string());
+		BOOST_REQUIRE_MESSAGE(!(fs::exists(expectedFillerName) && fs::exists(expectedFillerName2) && fs::exists(expectedCopierName)), "Src test could either be Filler.json, Filler.yml or Copier.json: " + file.filename().string());
 
 		// Check that filled tests created from actual fillers
 		if (Options::get().filltests == false)
@@ -144,7 +143,7 @@ void TestSuite::runAllTestsInFolder(string const& _testFolder) const
 	}
 
 	// run all tests
-	vector<fs::path> const files = test::getFiles(getFullPathFiller(_testFolder), {".json",".yaml"}, filter.empty() ? filter : filter + "Filler");
+	vector<fs::path> const files = test::getFiles(getFullPathFiller(_testFolder), {".json", ".yml"}, filter.empty() ? filter : filter + "Filler");
 
 	auto& testOutput = test::TestOutputHelper::get();
 	testOutput.initTest(files.size());
@@ -217,7 +216,10 @@ void TestSuite::executeTest(string const& _testFolder, fs::path const& _jsonFile
 			string const s = asString(byteContents);
 			BOOST_REQUIRE_MESSAGE(s.length() > 0, "Contents of " + _jsonFileName.string() + " is empty.");
 
-			json_spirit::read_string(s, v);
+			if (_jsonFileName.extension() == ".json")
+				json_spirit::read_string(s, v);
+			else
+				v = test::parseYamlToJson(s);
 			removeComments(v);
 			json_spirit::mValue output = doTests(v, true);
 			addClientInfo(output, boostRelativeTestPath, sha3(byteContents));

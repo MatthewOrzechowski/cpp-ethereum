@@ -30,6 +30,7 @@
 #include <boost/filesystem/path.hpp>
 #include <set>
 #include <string>
+#include <yaml-cpp/yaml.h>
 
 using namespace std;
 using namespace dev::eth;
@@ -268,21 +269,18 @@ std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _di
 {
 	vector<boost::filesystem::path> jsonFiles;
 	std::set<string> extentions = removeRepeatElementsFromSet(_extentionMask);
-	if (!_particularFile.empty())
+	for(auto const& ext: extentions)
 	{
-		for(auto const& ext: extentions)
+		if (!_particularFile.empty())
 		{
 			boost::filesystem::path file = _dirPath / (_particularFile + ext);
 			if (boost::filesystem::exists(file))
 				jsonFiles.push_back(file);
 		}
-	}
-	else
-	{
-		using Bdit = boost::filesystem::directory_iterator;
-		for (Bdit it(_dirPath); it != Bdit(); ++it)
+		else
 		{
-			for(auto const& ext: extentions)
+			using Bdit = boost::filesystem::directory_iterator;
+			for (Bdit it(_dirPath); it != Bdit(); ++it)
 			{
 				if (boost::filesystem::is_regular_file(it->path()) && it->path().extension() == ext)
 						jsonFiles.push_back(it->path());
@@ -290,6 +288,13 @@ std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _di
 		}
 	}
 	return jsonFiles;
+}
+
+json_spirit::mValue parseYamlToJson(std::string const& _string)
+{
+	json_spirit::mValue value;
+	_string.size();
+	return value;
 }
 
 std::string executeCmd(std::string const& _command)
