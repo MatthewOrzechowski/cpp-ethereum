@@ -290,11 +290,42 @@ std::vector<boost::filesystem::path> getFiles(boost::filesystem::path const& _di
 	return jsonFiles;
 }
 
+json_spirit::mValue convertYamlNodeToJson(YAML::Node _node)
+{
+	if (_node.IsNull())
+		return json_spirit::mObject();
+
+	if (_node.IsScalar())
+	{
+		json_spirit::mValue value;
+		value = _node.as<std::string>();
+		return value;
+	}
+
+	if (_node.IsMap())
+	{
+		json_spirit::mObject jObject;
+		for (auto const& i : _node)
+			jObject[i.first.as<std::string>()] = convertYamlNodeToJson(i.second);
+		return jObject;
+	}
+
+	if (_node.IsSequence())
+	{
+		json_spirit::mArray jArray;
+		for (std::size_t i = 0; i < _node.size(); i++)
+			jArray.push_back(convertYamlNodeToJson(_node[i]));
+		return jArray;
+	}
+
+	return json_spirit::mValue();
+}
+
+// this function is here so not to include YAML into other files
 json_spirit::mValue parseYamlToJson(std::string const& _string)
 {
-	json_spirit::mValue value;
-	_string.size();
-	return value;
+	YAML::Node testFile = YAML::Load(_string);
+	return convertYamlNodeToJson(testFile);
 }
 
 std::string executeCmd(std::string const& _command)
