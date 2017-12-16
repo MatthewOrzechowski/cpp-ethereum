@@ -150,7 +150,7 @@ void TestSuite::runAllTestsInFolder(string const& _testFolder) const
 	for (auto const& file: files)
 	{
 		testOutput.showProgress();
-		testOutput.setCurrentTestFileName(file.filename().string());
+		testOutput.setCurrentTestFileName(file);
 		executeTest(_testFolder, file);
 	}
 	testOutput.finishTest();

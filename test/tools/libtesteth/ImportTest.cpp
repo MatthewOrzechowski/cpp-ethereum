@@ -524,13 +524,21 @@ void ImportTest::parseJsonStrValueIntoVector(json_spirit::mValue const& _json, v
 
 void parseJsonIntValueIntoVector(json_spirit::mValue const& _json, vector<int>& _out)
 {
+	auto converter = [&_out](json_spirit::mValue const& _value)
+	{
+		if (_value.type() == json_spirit::int_type)
+			_out.push_back(_value.get_int());
+		if (_value.type() == json_spirit::str_type)
+			_out.push_back(std::atoi(_value.get_str().c_str()));
+	};
+
 	if (_json.type() == json_spirit::array_type)
 	{
 		for (auto const& val: _json.get_array())
-			_out.push_back(val.get_int());
+			converter(val);
 	}
 	else
-		_out.push_back(_json.get_int());
+		converter(_json);
 }
 
 void ImportTest::checkAllowedNetwork(std::vector<std::string> const& _networks)
